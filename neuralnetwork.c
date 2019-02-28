@@ -23,7 +23,7 @@ double Sigmoid(double in) {
 
 /*running the program*/
 int main() {
-printf("I'm a neural network \n");
+printf("I'm fucking retard \n");
 printf("%f\n",Sigmoid(0.5));
 
 /*setting the number of nodes*/
