@@ -25,6 +25,15 @@ double Sigmoid(double in) {
 int main() {
 printf("I'm a neural network \n");
 printf("%f\n",Sigmoid(0.5));
+
+/*setting the number of nodes*/
+int numnodes_in = 2;
+int numnodes_out = 1;
+int numnodes_hidden = 2;
+
+/*setting parameters*/
+double error, eta = 0.1, alpha = 0.9; 
+
 }
 
 /*writing all functions */
