@@ -20,7 +20,6 @@ double Sigmoid(double in) {
 
 }
 
-
 /*running the program*/
 int main() {
 printf("I'm fucking retard \n");
@@ -32,7 +31,16 @@ int numnodes_out = 1;
 int numnodes_hidden = 2;
 
 /*setting parameters*/
-double error, eta = 0.1, alpha = 0.9; 
+double error, eta = 0.1, alpha = 0.9;
+int i,j,k; 
+
+/*setting datastructures*/
+double weight_input_hidden[numnodes_in+1][numnodes_hidden+1];
+double weight_hidden_output[numnodes_hidden+1][numnodes_out+1];
+double input_nodes[numnodes_in+1];
+double input_hidden[numnodes_hidden+1];
+double hidden_nodes[numnodes_hidden+1];
+double output_nodes[numnodes_out];
 
 }
 
