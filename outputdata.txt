@@ -1,0 +1,2 @@
+output jeg skriver til fil
+output jeg skriver til fil
