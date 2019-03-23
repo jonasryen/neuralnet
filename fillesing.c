@@ -45,16 +45,23 @@ int main(void)
 
         if (shifter == 0){
 	        if(second < first) {
-	        	antall_topper += 1;
+	        	
 	        	
 	        	tid_andre_topp = counter;
 	        	int intervall = tid_andre_topp - tid_første_topp;
 	        	periode_topper[antall_topper] = intervall;
-	        	tid_første_topp = counter;
+                antall_topper += 1;
+                tid_første_topp = counter;
+                topp_punkter[antall_topper] = first;
+                shifter = 1;
+                
+
+                printf("%f\n",periode_topper[antall_topper] );
+	        	
 	        	
 	        	printf("\nToppunkt?\n\n");
-	     		shifter = 1;
-	     		topp_punkter[antall_topper] = first;
+	     		
+	     		
 
 	     		
 	        }
@@ -65,9 +72,12 @@ int main(void)
 
 
 				tid_andre_bunn = counter;
-	        	int intervall = tid_andre_bunn - tid_andre_bunn;
-	        	periode_topper[antall_topper] = intervall;
-	        	tid_første_topp = counter;
+	        	int intervall = tid_andre_bunn - tid_første_bunn;
+	        	periode_bunner[antall_bunner] = intervall;
+                if (intervall > 90) {
+
+                }
+	        	tid_første_bunn = counter;
 
 	        	printf("\nBunnpunkt?\n\n");
 	     		shifter = 0;
@@ -83,12 +93,31 @@ int main(void)
     }
 
 
-    int i =1;
+    int i;
     printf("\nTopperioder:\n");
-    while (periode_topper[i] != 0) {
+    int sum_topp_perioder = 0;
+    for (i = 0; i < antall_topper; i = i+1){
+        sum_topp_perioder = sum_topp_perioder + periode_topper[i];
     	printf("%lf\n", periode_topper[i]);
     	i = i + 1;
     }
+
+    printf("\nBunnperioder:\n\n");
+    int j;
+    int sum_bunn_perioder = 0;
+    for (j = 0; j < antall_bunner; j = j + 1) {
+        sum_bunn_perioder = sum_bunn_perioder + periode_bunner[j];
+        printf("%lf\n", periode_bunner[j]);
+    }
+
+
+    double avg_topp_perioder = sum_topp_perioder/antall_topper;
+    printf("Snitt periodetid mellom topper: %f\n", avg_topp_perioder );
+    double avg_bunn_perioder = sum_bunn_perioder/antall_bunner;
+    printf("Snitt periodetid mellom bunner: %f\n", avg_bunn_perioder);
+
+
+
 	
 	//printf("\nAmplitude 1: %lf\nAmplitude 2: %lf\nAmplitude 3: %lf\nAmplitude 4: %lf\n\n", topp1, topp2, -1*bunn1, -1*bunn2);	
 
