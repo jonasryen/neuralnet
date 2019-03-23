@@ -11,11 +11,16 @@
 #define NUMHID 2
 #define NUMOUT 2
 #define INPUTFILE "testdata.txt"
+#define TARGETFILE "targetdata.txt"
+#define MAXITERATIONS 1000
+#define ACCEPTABLEERROR 0.0004
 
 #define rando() ((double)rand()/((double)RAND_MAX+1))
 
 main() {
     int    i, j, k, p, np, op, ranpat[NUMPAT+1], iteration;
+    int max_iterations = MAXITERATIONS*100;
+    double acceptable_error = ACCEPTABLEERROR;
     
     //Henter inputdata fra fil. 
     char * line = NULL;
@@ -31,15 +36,12 @@ main() {
     fp = fopen(file_name, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
-    
-    printf("The contents of %s file are:\n", file_name);
 
     //Sjekker hvor mange linjer med data det er i inputfilen
 
     while((read = getline(&line, &len, fp)) != -1) {
         numberofelements += 1;
     }
-    printf("Linjer: %i\n",numberofelements);
 
     fclose(fp);
     line = NULL;
@@ -50,13 +52,13 @@ main() {
     //Legger til data i inputtabellen
     patterns = numberofelements/NUMIN;
     double input_nodes[patterns+1][NUMIN+1];
-    printf("Patterns: %i\n",patterns);
+    printf("Number of datasets: %i\n",patterns);
     int n = 1; 
     int m = 1;
     int counter = 0; 
 
        while((read = getline(&line, &len, fp)) != -1) {
-        sscanf(line, "%lf", &ex); /* Gjør om fra char til int */
+        sscanf(line, "%lf", &ex); /* Gjør om fra char til double */
         input_nodes[n][m] = ex;
         counter += 1; 
         if(counter % NUMIN == 0) {
@@ -65,15 +67,45 @@ main() {
         } else {
             m += 1;
         }; 
-        printf("n: %i m: %i \n",n,m );
 
         }
        fclose(fp);
 
-    //Gammel måte å hente data på. Fjern når vi har greid å lese fra fil .
-    int    NumPattern = patterns, numnodes_in = NUMIN, numnodes_hidden = NUMHID, numnodes_out = NUMOUT;
 
-    double target_values[NUMPAT+1][NUMOUT+1] = { {0, 0, 0},  {0, 0, 1},  {0, 1, 0},  {0, 1, 1},  {0, 0, 1} };
+    //Henter target data fra fil.
+    line = NULL;
+    char tfile_name[50] = TARGETFILE;
+    len = 0;
+    int target_patterns = NUMOUT*patterns;
+    double target_values[target_patterns+1][NUMOUT+1];
+
+    FILE *tfp;
+    tfp = fopen(file_name, "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+
+    n = 0;
+    m = 1;
+    counter = 0;
+
+
+    while((read = getline(&line, &len, tfp)) != -1) {
+        sscanf(line, "%lf", &ex); /* Gjør om fra char til double */
+        target_values[n][m] = ex;
+        counter += 1; 
+        if(counter % NUMOUT == 0) {
+            n += 1;
+            m = 1; 
+        } else {
+            m += 1;
+        }; 
+
+        }
+       fclose(tfp);
+
+
+    //Gjør klar hidden layer
+    int    NumPattern = patterns, numnodes_in = NUMIN, numnodes_hidden = NUMHID, numnodes_out = NUMOUT;
     double input_hidden[NUMPAT+1][NUMHID+1], weight_input_hidden[NUMIN+1][NUMHID+1], hidden_nodes[NUMPAT+1][NUMHID+1];
     double SumO[NUMPAT+1][NUMOUT+1], weight_hidden_output[NUMHID+1][NUMOUT+1], output_nodes[NUMPAT+1][NUMOUT+1];
     double DeltaO[NUMOUT+1], SumDOW[NUMHID+1], DeltaH[NUMHID+1];
@@ -93,7 +125,7 @@ main() {
         }
     }
      
-    for( iteration = 0 ; iteration < 100000 ; iteration++) {    /* iterate weight updates */
+    for( iteration = 0 ; iteration < max_iterations; iteration++) {    /* iterate weight updates */
         for( p = 1 ; p <= NumPattern ; p++ ) {    /* randomize order of training patterns */
             ranpat[p] = p ;
         }
@@ -151,7 +183,7 @@ main() {
         
         //Skriver ut error for hver runde (iteration)
         if( iteration%100 == 0 ) fprintf(stdout, "\niteration %-5d :   Error = %f", iteration, Error) ;
-        if( Error < 0.0004 ) break ;  
+        if( Error < acceptable_error ) break ;  
     }
 
     //Skriver ut tabellene med verdier for inputnodene, outputnodene osv. 
@@ -163,7 +195,7 @@ main() {
 
     //TODO endre denne til å skrive amplitude, periode osv. i stedet. 
     for( k = 1 ; k <= numnodes_out ; k++ ) {
-        fprintf(stdout, "target_values%-4d\toutput_nodes%-4d\t", k, k) ;
+        fprintf(stdout, "target_values%-4doutput_nodes%-4d", k, k) ;
     }
     for( p = 1 ; p <= NumPattern ; p++ ) {        
     fprintf(stdout, "\n%d\t", p) ;
