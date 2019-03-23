@@ -10,14 +10,70 @@
 #define NUMIN  2
 #define NUMHID 2
 #define NUMOUT 2
+#define INPUTFILE "testdata.txt"
 
 #define rando() ((double)rand()/((double)RAND_MAX+1))
 
 main() {
     int    i, j, k, p, np, op, ranpat[NUMPAT+1], iteration;
-    int    NumPattern = NUMPAT, numnodes_in = NUMIN, numnodes_hidden = NUMHID, numnodes_out = NUMOUT;
-    double input_nodes[NUMPAT+1][NUMIN+1] = { {0, 0, 0},  {0, 0, 0},  {0, 1, 0},  {0, 0, 1},  {0, 1, 1} };
-    double target_values[NUMPAT+1][NUMOUT+1] = { {0, 0},  {0, 0},  {0, 1},  {0, 1},  {0, 0} };
+    
+    //Henter inputdata fra fil. 
+    char * line = NULL;
+    char file_name[50] = INPUTFILE;
+    ssize_t read;
+    size_t len = 0;
+    int numberofelements = 0; 
+    double ex;
+    int number;
+    int patterns; 
+
+    FILE *fp;
+    fp = fopen(file_name, "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+    
+    printf("The contents of %s file are:\n", file_name);
+
+    //Sjekker hvor mange linjer med data det er i inputfilen
+
+    while((read = getline(&line, &len, fp)) != -1) {
+        numberofelements += 1;
+    }
+    printf("Linjer: %i\n",numberofelements);
+
+    fclose(fp);
+    line = NULL;
+    len = 0; 
+
+    fp = fopen(file_name, "r");
+
+    //Legger til data i inputtabellen
+    patterns = numberofelements/NUMIN;
+    double input_nodes[patterns+1][NUMIN+1];
+    printf("Patterns: %i\n",patterns);
+    int n = 1; 
+    int m = 1;
+    int counter = 0; 
+
+       while((read = getline(&line, &len, fp)) != -1) {
+        sscanf(line, "%lf", &ex); /* Gjør om fra char til int */
+        input_nodes[n][m] = ex;
+        counter += 1; 
+        if(counter % NUMIN == 0) {
+            n += 1;
+            m = 1; 
+        } else {
+            m += 1;
+        }; 
+        printf("n: %i m: %i \n",n,m );
+
+        }
+       fclose(fp);
+
+    //Gammel måte å hente data på. Fjern når vi har greid å lese fra fil .
+    int    NumPattern = patterns, numnodes_in = NUMIN, numnodes_hidden = NUMHID, numnodes_out = NUMOUT;
+
+    double target_values[NUMPAT+1][NUMOUT+1] = { {0, 0, 0},  {0, 0, 1},  {0, 1, 0},  {0, 1, 1},  {0, 0, 1} };
     double input_hidden[NUMPAT+1][NUMHID+1], weight_input_hidden[NUMIN+1][NUMHID+1], hidden_nodes[NUMPAT+1][NUMHID+1];
     double SumO[NUMPAT+1][NUMOUT+1], weight_hidden_output[NUMHID+1][NUMOUT+1], output_nodes[NUMPAT+1][NUMOUT+1];
     double DeltaO[NUMOUT+1], SumDOW[NUMHID+1], DeltaH[NUMHID+1];
@@ -92,15 +148,15 @@ main() {
                 }
             }
         }
-
+        
         //Skriver ut error for hver runde (iteration)
         if( iteration%100 == 0 ) fprintf(stdout, "\niteration %-5d :   Error = %f", iteration, Error) ;
-        if( Error < 0.0004 ) break ;  /* stop learning when 'near enough' */
+        if( Error < 0.0004 ) break ;  
     }
 
     //Skriver ut tabellene med verdier for inputnodene, outputnodene osv. 
     
-    fprintf(stdout, "\n\nNETWORK DATA - iteration %d\n\nPat\t", iteration) ;   /* print network outputs */
+    fprintf(stdout, "\n\nNETWORK DATA - iteration %d\n\nPat\t", iteration) ;   
     for( i = 1 ; i <= numnodes_in ; i++ ) {
         fprintf(stdout, "input_nodes%-4d\t", i) ;
     }
@@ -116,10 +172,12 @@ main() {
         }
         for( k = 1 ; k <= numnodes_out ; k++ ) {
             fprintf(stdout, "%f\t%f\t", target_values[p][k], output_nodes[p][k]) ;
-        }
+        } 
+    
     }
     fprintf(stdout, "\n\nGoodbye!\n\n") ;
-    return 1 ;
+    return 1 ; 
+
 }
 
 /*******************************************************************************/
