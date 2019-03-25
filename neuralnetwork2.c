@@ -18,14 +18,14 @@
 
 #define rando() ((double)rand()/((double)RAND_MAX+1))
 
-main() {
+int main() {
     int    i, j, k, p, np, op, ranpat[NUMPAT+1], iteration;
     int max_iterations = MAXITERATIONS*100;
     double acceptable_error = ACCEPTABLEERROR;
     
     //Henter inputdata fra fil. 
     char * line = NULL;
-    char file_name[50] = INPUTFILE;
+    char file_name[2000] = INPUTFILE;
     ssize_t read;
     size_t len = 0;
     int numberofelements = 0; 
@@ -81,8 +81,8 @@ main() {
     double target_values[target_patterns+1][NUMOUT+1];
 
     FILE *tfp;
-    tfp = fopen(file_name, "r");
-    if (fp == NULL)
+    tfp = fopen(tfile_name, "r");
+    if (tfp == NULL)
         exit(EXIT_FAILURE);
 
     n = 0;
@@ -213,12 +213,12 @@ main() {
     //Skriver output til fil
     FILE *ofp;
     char ofile_name[50] = OUTPUTFILE;
-    ofp = fopen(ofile_name, "r");
+    ofp = fopen(ofile_name, "w");
 
     for (p = 1; p <= NumPattern ; p++) {
         for (k = 1 ; k <= numnodes_out ; k++) {
-            fprintf(ofp, "%f\n", output_nodes[p][k]);
-            fprintf(stdout, "Skriver til fil\n");
+            fprintf(ofp, "%f\n\n", output_nodes[p][k]);
+            fprintf(stdout, "\nSkriver til fil");
         }
     }
     fclose(ofp);
