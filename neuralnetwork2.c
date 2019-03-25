@@ -12,6 +12,7 @@
 #define NUMOUT 2
 #define INPUTFILE "testdata.txt"
 #define TARGETFILE "targetdata.txt"
+#define OUTPUTFILE "outputdata.txt"
 #define MAXITERATIONS 1000
 #define ACCEPTABLEERROR 0.0004
 
@@ -197,6 +198,8 @@ main() {
     for( k = 1 ; k <= numnodes_out ; k++ ) {
         fprintf(stdout, "target_values%-4doutput_nodes%-4d", k, k) ;
     }
+
+
     for( p = 1 ; p <= NumPattern ; p++ ) {        
     fprintf(stdout, "\n%d\t", p) ;
         for( i = 1 ; i <= numnodes_in ; i++ ) {
@@ -207,7 +210,21 @@ main() {
         } 
     
     }
-    fprintf(stdout, "\n\nGoodbye!\n\n") ;
+    //Skriver output til fil
+    FILE *ofp;
+    char ofile_name[50] = OUTPUTFILE;
+    ofp = fopen(ofile_name, "r");
+
+    for (p = 1; p <= NumPattern ; p++) {
+        for (k = 1 ; k <= numnodes_out ; k++) {
+            fprintf(ofp, "%f\n", output_nodes[p][k]);
+            fprintf(stdout, "Skriver til fil\n");
+        }
+    }
+    fclose(ofp);
+
+
+    fprintf(stdout, "\n\nFullført!\n\n") ;
     return 1 ; 
 
 }
