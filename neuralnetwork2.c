@@ -10,11 +10,15 @@
 #define NUMIN  2
 #define NUMHID 2
 #define NUMOUT 2
-#define INPUTFILE "testdata.txt"
+#define INPUTFILE "inputdata.txt"
 #define TARGETFILE "targetdata.txt"
 #define OUTPUTFILE "outputdata.txt"
-#define MAXITERATIONS 1000
+#define MAXITERATIONS 100
 #define ACCEPTABLEERROR 0.0004
+#define LEARNINGRATE 1
+#define MOMENTUM 0.9
+#define INITIALWEIGHT 0.2
+#define FILESIZE 1000000
 
 #define rando() ((double)rand()/((double)RAND_MAX+1))
 
@@ -25,7 +29,7 @@ int main() {
     
     //Henter inputdata fra fil. 
     char * line = NULL;
-    char file_name[2000] = INPUTFILE;
+    char file_name[FILESIZE] = INPUTFILE;
     ssize_t read;
     size_t len = 0;
     int numberofelements = 0; 
@@ -75,7 +79,7 @@ int main() {
 
     //Henter target data fra fil.
     line = NULL;
-    char tfile_name[50] = TARGETFILE;
+    char tfile_name[FILESIZE] = TARGETFILE;
     len = 0;
     int target_patterns = NUMOUT*patterns;
     double target_values[target_patterns+1][NUMOUT+1];
@@ -111,7 +115,8 @@ int main() {
     double SumO[NUMPAT+1][NUMOUT+1], weight_hidden_output[NUMHID+1][NUMOUT+1], output_nodes[NUMPAT+1][NUMOUT+1];
     double DeltaO[NUMOUT+1], SumDOW[NUMHID+1], DeltaH[NUMHID+1];
     double Deltaweight_input_hidden[NUMIN+1][NUMHID+1], Deltaweight_hidden_output[NUMHID+1][NUMOUT+1];
-    double Error, eta = 0.5, alpha = 0.9, smallwt = 0.5;
+    double Error, eta = LEARNINGRATE, alpha = MOMENTUM, smallwt = INITIALWEIGHT;
+
   
     for( j = 1 ; j <= numnodes_hidden ; j++ ) {    /* initialize weight_input_hidden and Deltaweight_input_hidden */
         for( i = 0 ; i <= numnodes_in ; i++ ) { 
@@ -212,13 +217,12 @@ int main() {
     }
     //Skriver output til fil
     FILE *ofp;
-    char ofile_name[50] = OUTPUTFILE;
+    char ofile_name[1000] = OUTPUTFILE;
     ofp = fopen(ofile_name, "w");
 
     for (p = 1; p <= NumPattern ; p++) {
         for (k = 1 ; k <= numnodes_out ; k++) {
             fprintf(ofp, "%f\n\n", output_nodes[p][k]);
-            fprintf(stdout, "\nSkriver til fil");
         }
     }
     fclose(ofp);
