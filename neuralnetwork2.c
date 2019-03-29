@@ -6,25 +6,24 @@
 #include <math.h>
 #include <fcntl.h>
 
-#define NUMPAT 4
 #define NUMIN  2
-#define NUMHID 2
+#define NUMHID 4
 #define NUMOUT 2
-#define INPUTFILE "inputdata.txt"
-#define TARGETFILE "targetdata.txt"
-#define OUTPUTFILE "outputdata.txt"
-#define MAXITERATIONS 100
+#define INPUTFILE "testdata_input.txt"
+#define TARGETFILE "testdata_target.txt"
+#define OUTPUTFILE "testdata:output.txt"
+#define MAXITERATIONS 1000
 #define ACCEPTABLEERROR 0.0004
-#define LEARNINGRATE 1
+#define LEARNINGRATE 0.1
 #define MOMENTUM 0.9
 #define INITIALWEIGHT 0.2
-#define FILESIZE 1000000
+#define FILESIZE 10000
 
 #define rando() ((double)rand()/((double)RAND_MAX+1))
 
 int main() {
-    int    i, j, k, p, np, op, ranpat[NUMPAT+1], iteration;
-    int max_iterations = MAXITERATIONS*100;
+    int    i, j, k, p, np, op, iteration;
+    int max_iterations = MAXITERATIONS;
     double acceptable_error = ACCEPTABLEERROR;
     
     //Henter inputdata fra fil. 
@@ -56,6 +55,8 @@ int main() {
 
     //Legger til data i inputtabellen
     patterns = numberofelements/NUMIN;
+    int NUMPAT = patterns;
+    int ranpat[patterns+1];
     double input_nodes[patterns+1][NUMIN+1];
     printf("Number of datasets: %i\n",patterns);
     int n = 1; 
